@@ -23,6 +23,7 @@ class WebSocket implements WebSocketObserver {
     protected $_messages = array();
     protected $_head = '';
     protected $_timeOut = 1;
+    private $serverKey = 'SJ8s7*v(:rbNT$N5$m=M5';
 
     // mamta
     public function __construct($url, $useHybie = true) {
@@ -87,7 +88,6 @@ class WebSocket implements WebSocketObserver {
      */
     public function open() {
         $errno = $errstr = null;
-
         $protocol = $this->scheme == 'ws' ? "tcp" : "ssl";
 
         $this->socket = stream_socket_client("$protocol://{$this->host}:{$this->port}", $errno, $errstr, $this->getTimeOut());
@@ -113,6 +113,11 @@ class WebSocket implements WebSocketObserver {
         return true;
     }
 
+    public function setAdmin() {
+        $data = WebSocketMessage::create(json_serialize(array('mode'=>'server','key'=>$this->serverKey)));
+        $this->sendMessage($data);
+    }
+
     private function serializeHeaders() {
         $str = '';
 
@@ -133,7 +138,7 @@ class WebSocket implements WebSocketObserver {
     protected function buildHeaderArray() {
         $this->handshakeChallenge = WebSocketFunctions::randHybiKey();
 
-        $this->headers = array("GET" => "{$this->url} HTTP/1.1", "Connection:" => "Upgrade", "Host:" => "{$this->host}:{$this->port}", "Sec-WebSocket-Key:" => "{$this->handshakeChallenge}", "Sec-WebSocket-Origin:" => "{$this->origin}", "Sec-WebSocket-Version:" => 11, "Upgrade:" => "websocket");
+        $this->headers = array("GET" => "{$this->url} HTTP/1.1", "Connection:" => "Upgrade", "Host:" => "{$this->host}:{$this->port}", "Sec-WebSocket-Key:" => "{$this->handshakeChallenge}", "Sec-WebSocket-Origin:" => "{$this->origin}", "Sec-WebSocket-Version:" => 8, "Upgrade:" => "websocket");
 
         return $this->headers;
     }

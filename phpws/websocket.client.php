@@ -114,7 +114,7 @@ class WebSocket implements WebSocketObserver {
     }
 
     public function setAdmin() {
-        $data = WebSocketMessage::create(json_serialize(array('mode'=>'server','key'=>$this->serverKey)));
+        $data = WebSocketMessage::create(json_encode(array('mode'=>'server','key'=>$this->serverKey)));
         $this->sendMessage($data);
     }
 
